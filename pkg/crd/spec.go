@@ -20,7 +20,8 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/gobuffalo/flect"
+	"k8s.io/gengo/namer"
+	"k8s.io/gengo/types"
 
 	apiext "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -55,7 +56,8 @@ func (p *Parser) NeedCRDFor(groupKind schema.GroupKind, maxDescLen *int) {
 		packages = append(packages, pkg)
 	}
 
-	defaultPlural := flect.Pluralize(strings.ToLower(groupKind.Kind))
+	// defaultPlural := flect.Pluralize(strings.ToLower(groupKind.Kind))
+	defaultPlural := namer.NewAllLowercasePluralNamer(nil).Name(&types.Type{Name: types.Name{Name: groupKind.Kind}})
 	crd := apiext.CustomResourceDefinition{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: apiext.SchemeGroupVersion.String(),
